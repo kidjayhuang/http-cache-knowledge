@@ -6,18 +6,19 @@ http缓存知识归纳
 http缓存应用，我自己的理解是，对于单页面应用，最好的情况就是html入口文件完全不缓存，而js,css,img等静态资源通过配置强缓存、协商缓存等方式来提高性能，
 
 html设置不缓存，网上能找到的html不缓存的前端能做的方法，是设置meta头，
+
 ```js
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-```js
+```
 
 
 但是经过实践检验(本地搭的express服务)发现，这种方式并不奏效，html仍然能够命中协议缓存(eTag)，返回304，实际奏效的方式是在express配置
 
 ```js
 res.setHeader('Cache-Control', 'no-store')
-```js
+```
 
 nginx、apache等有语句稍有差异，但都是同一个意思,就是在响应头设置html页面完全跳过强缓存跟协商缓存，每次都重新发送一次请求，  
 保证了html页面的新鲜度，实际上，只要html入口不缓存，其它静态资源就可以肆意设置强缓存了，设置个十年都没有问题，因为只要入口  
